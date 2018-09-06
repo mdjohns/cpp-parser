@@ -12,4 +12,4 @@ This project will be a JavaScript web application designed to be run in the brow
 
 ### TO DO
 
-1. (9/5) **Create scanner**. This should retrieve tokens (such as `int`, `"blah"`, and `+`) from inputted code and push those tokens to an array.
+1. (9/5) **Create lexer**. This should retrieve tokens (such as `int`, `"blah"`, and `+`) from inputted code and push those tokens to an array.
