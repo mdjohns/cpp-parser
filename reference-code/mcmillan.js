@@ -177,7 +177,7 @@ function scanToken(program) {
       aToken.kind = "identifier";
       aToken.spelling = currentSpelling;
       tokens.push(aToken);
-      print(currentSpelling);
+      console.log(currentSpelling);
       currentSpelling = "";
     }
     if (isDigit(currentChar)) {
@@ -185,12 +185,12 @@ function scanToken(program) {
       while (isDigit(currentChar) || isDecimal(currentChar)) {
         takeIt();
       }
-      print(currentSpelling);
+      console.log(currentSpelling);
       var aToken = Object.create(Token);
       aToken.kind = "number";
       aToken.spelling = currentSpelling;
       tokens.push(aToken);
-      print("debug: pushing token");
+      console.log("debug: pushing token");
       currentSpelling = "";
     } else if (isSpace(currentChar)) {
       skip();
@@ -199,16 +199,16 @@ function scanToken(program) {
       while (isOperator(currentChar)) {
         takeIt();
       }
-      print(currentSpelling);
+      console.log(currentSpelling);
       var aToken = Object.create(Token);
       aToken.kind = "operator";
       aToken.spelling = currentSpelling;
       tokens.push(aToken);
-      print("debug: pushing token");
+      console.log("debug: pushing token");
       currentSpelling = "";
     } else if (isSemicolon(currentChar)) {
       takeIt();
-      //print(currentSpelling);
+      //console.log(currentSpelling);
       var aToken = Object.create(Token);
       aToken.kind = "semicolon";
       aToken.spelling = currentSpelling;
@@ -223,15 +223,15 @@ function parse(tokens) {
   var decl = { type: "", spelling: "" };
   var types = ["int", "double", "string"];
   for (let i = 0; i < tokens.length; i++) {
-    print(tokens[i].spelling);
+    console.log(tokens[i].spelling);
   }
 }
 
 var program = "int a; a = 1;";
-print("starting scanToken");
+console.log("starting scanToken");
 scanToken(program);
 /*for (var i in tokens) {
-   print(tokens[i].kind + ": " + tokens[i].spelling);
+   console.log(tokens[i].kind + ": " + tokens[i].spelling);
 }*/
-print("Starting parse");
+console.log("Starting parse");
 parse(tokens);

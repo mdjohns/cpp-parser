@@ -1,3 +1,38 @@
+const keywords = [
+  "auto",
+  "break",
+  "case",
+  "char",
+  "const",
+  "continue",
+  "default",
+  "do",
+  "double",
+  "else",
+  "enum",
+  "extern",
+  "float",
+  "for",
+  "goto",
+  "if",
+  "int",
+  "long",
+  "register",
+  "return",
+  "short",
+  "signed",
+  "sizeof",
+  "static",
+  "struct",
+  "switch",
+  "typedef",
+  "union",
+  "unsigned",
+  "void",
+  "volatile",
+  "while"
+];
+
 function isDigit(char) {
   switch (char) {
     case "0":
@@ -15,6 +50,7 @@ function isDigit(char) {
     default:
       return false;
   }
+  2;
 }
 
 function isLetter(char) {
@@ -118,6 +154,7 @@ function isDecimal(char) {
   if (char == ".") {
     return true;
   }
+  return false;
 }
 
 function isLeftParen(char) {
@@ -148,42 +185,30 @@ function isRightBracket(char) {
   return false;
 }
 
-function lexer(input) {
+function scanner(input) {
   let inputArr = input.split("");
   let output = [];
 
-  inputArr.forEach(el => {
-    if (isDigit(el)) {
-      output.push(el);
-    }
-    if (isLetter(el)) {
-      output.push(el);
-    }
-    if (isSpace(el)) {
-      output.push(el);
-    }
-    if (isOperator(el)) {
-      output.push(el);
-    }
-    if (isSemicolon(el)) {
-      output.push(el);
-    }
-    if (isLeftParen(el)) {
-      output.push(el);
-    }
-    if (isRightParen(el)) {
-      output.push(el);
-    }
-    if (isLeftBracket(el)) {
-      output.push(el);
-    }
-    if (isRightBracket(el)) {
-      output.push(el);
+  inputArr.forEach(ch => {
+    if (isDigit(ch)) {
+      output.push(ch);
+    } else if (isLetter(ch)) {
+      output.push(ch);
+    } else if (isSpace(ch)) {
+      output.push(ch);
+    } else if (isOperator(ch)) {
+      output.push(ch);
+    } else if (isSemicolon(ch)) {
+      output.push(ch);
+    } else if (isLeftParen(ch)) {
+      output.push(ch);
+    } else if (isRightParen(ch)) {
+      output.push(ch);
+    } else if (isLeftBracket(ch)) {
+      output.push(ch);
+    } else if (isRightBracket(ch)) {
+      output.push(ch);
     }
   });
   return output;
 }
-
-const testInput = "1 + 2 = 3;";
-
-console.log(lexer(testInput));
