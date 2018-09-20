@@ -189,26 +189,40 @@ function scanner(input) {
   let inputArr = input.split("");
   let output = [];
 
-  inputArr.forEach(ch => {
-    if (isDigit(ch)) {
-      output.push(ch);
-    } else if (isLetter(ch)) {
-      output.push(ch);
-    } else if (isSpace(ch)) {
-      output.push(ch);
-    } else if (isOperator(ch)) {
-      output.push(ch);
-    } else if (isSemicolon(ch)) {
-      output.push(ch);
-    } else if (isLeftParen(ch)) {
-      output.push(ch);
-    } else if (isRightParen(ch)) {
-      output.push(ch);
-    } else if (isLeftBracket(ch)) {
-      output.push(ch);
-    } else if (isRightBracket(ch)) {
-      output.push(ch);
+  for (let i = 0; i < inputArr.length; i++) {
+    if (isDigit(inputArr[i])) {
+      let chunkDigits = "";
+      while (isDigit(inputArr[i]) || isDecimal(inputArr[i])) {
+        chunkDigits += inputArr[i];
+        i++;
+      }
+      output.push(chunkDigits);
+    } else if (isLetter(inputArr[i])) {
+      let chunkLetters = "";
+      while (isLetter(inputArr[i])) {
+        chunkLetters += inputArr[i];
+        i++;
+      }
+      output.push(chunkLetters);
+    } else if (isSpace(inputArr[i])) {
+      output.push(inputArr[i]);
+    } else if (isOperator(inputArr[i])) {
+      output.push(inputArr[i]);
+    } else if (isSemicolon(inputArr[i])) {
+      output.push(inputArr[i]);
+    } else if (isLeftParen(inputArr[i])) {
+      output.push(inputArr[i]);
+    } else if (isRightParen(inputArr[i])) {
+      output.push(inputArr[i]);
+    } else if (isLeftBracket(inputArr[i])) {
+      output.push(inputArr[i]);
+    } else if (isRightBracket(inputArr[i])) {
+      output.push(inputArr[i]);
     }
-  });
+  }
+
   return output;
 }
+
+let testInput = "1.1 + 2 = 13 banana";
+console.log(scanner(testInput));
