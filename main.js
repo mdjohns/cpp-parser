@@ -1,3 +1,17 @@
+class Token {
+  constructor() {
+    this.kind = "";
+    this.spelling = "";
+  }
+}
+
+class Keyword extends Token {
+  constructor() {
+    this.kind = "Keyword";
+    this.spelling = "";
+  }
+}
+
 const keywords = [
   "auto",
   "break",
@@ -50,7 +64,6 @@ function isDigit(char) {
     default:
       return false;
   }
-  2;
 }
 
 function isLetter(char) {
@@ -171,18 +184,40 @@ function isRightParen(char) {
   return false;
 }
 
-function isLeftBracket(char) {
+function isLeftCurly(char) {
   if (char == "{") {
     return true;
   }
   return false;
 }
 
-function isRightBracket(char) {
+function isRightCurly(char) {
   if (char == "}") {
     return true;
   }
   return false;
+}
+
+function isLeftBracket(char) {
+  if (char == "[") {
+    return true;
+  }
+  return false;
+}
+
+function isRightBracket(char) {
+  if (char == "]") {
+    return true;
+  }
+  return false;
+}
+
+function isKeyword(word) {
+  keywords.forEach(keyword => {
+    if (word == keyword) {
+      return true;
+    }
+  });
 }
 
 function scanner(input) {
@@ -191,9 +226,10 @@ function scanner(input) {
 
   for (let i = 0; i < inputArr.length; i++) {
     if (isDigit(inputArr[i])) {
-      let chunkDigits = "";
+      let chunkDigits = new Token();
+      chunkDigits.kind = "Integer";
       while (isDigit(inputArr[i]) || isDecimal(inputArr[i])) {
-        chunkDigits += inputArr[i];
+        chunkDigits.spelling += inputArr[i];
         i++;
       }
       output.push(chunkDigits);
@@ -203,7 +239,13 @@ function scanner(input) {
         chunkLetters += inputArr[i];
         i++;
       }
-      output.push(chunkLetters);
+      if (isKeyword(chunkLetters)) {
+        let key = new Keyword();
+        key.spelling = chunkLetters;
+        output.push(key);
+      } else {
+        output.push(chunkLetters);
+      }
     } else if (isSpace(inputArr[i])) {
       output.push(inputArr[i]);
     } else if (isOperator(inputArr[i])) {
@@ -218,11 +260,19 @@ function scanner(input) {
       output.push(inputArr[i]);
     } else if (isRightBracket(inputArr[i])) {
       output.push(inputArr[i]);
+    } else if (isLeftCurly(inputArr[i])) {
+      output.push(inputArr[i]);
+    } else if (isRightCurly(inputArr[i])) {
+      output.push(inputArr[i]);
     }
   }
 
   return output;
 }
 
-let testInput = "1.1 + 2 = 13 banana";
-console.log(scanner(testInput));
+function main() {
+  let testInput = "int a = 12;";
+  return scanner(testInput);
+}
+
+console.log(main());
