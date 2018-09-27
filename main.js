@@ -1,14 +1,7 @@
 class Token {
-  constructor() {
-    this.kind = "";
-    this.spelling = "";
-  }
-}
-
-class Keyword extends Token {
-  constructor() {
-    this.kind = "Keyword";
-    this.spelling = "";
+  constructor(kind, spelling) {
+    this.kind = kind;
+    this.spelling = spelling;
   }
 }
 
@@ -118,7 +111,7 @@ function isLetter(char) {
     case "X":
     case "y":
     case "Y":
-    case "Z":
+    case "z":
     case "Z": {
       return true;
     }
@@ -213,11 +206,9 @@ function isRightBracket(char) {
 }
 
 function isKeyword(word) {
-  keywords.forEach(keyword => {
-    if (word == keyword) {
-      return true;
-    }
-  });
+  if (keywords.includes(word)) {
+    return true;
+  }
 }
 
 function scanner(input) {
@@ -226,34 +217,37 @@ function scanner(input) {
 
   for (let i = 0; i < inputArr.length; i++) {
     if (isDigit(inputArr[i])) {
-      let chunkDigits = new Token();
-      chunkDigits.kind = "Integer";
+      let chunkDigits = new Token("Integer", "");
       while (isDigit(inputArr[i]) || isDecimal(inputArr[i])) {
         chunkDigits.spelling += inputArr[i];
         i++;
       }
       output.push(chunkDigits);
     } else if (isLetter(inputArr[i])) {
-      let chunkLetters = "";
+      let chunkLetters = new Token("String literal", "");
       while (isLetter(inputArr[i])) {
-        chunkLetters += inputArr[i];
+        chunkLetters.spelling += inputArr[i];
         i++;
       }
-      if (isKeyword(chunkLetters)) {
-        let key = new Keyword();
-        key.spelling = chunkLetters;
+      if (isKeyword(chunkLetters.spelling)) {
+        let key = new Token("Keyword", chunkLetters.spelling);
+        console.log("keyword");
         output.push(key);
       } else {
         output.push(chunkLetters);
       }
     } else if (isSpace(inputArr[i])) {
-      output.push(inputArr[i]);
+      let space = new Token("Space", " ");
+      output.push(space);
     } else if (isOperator(inputArr[i])) {
-      output.push(inputArr[i]);
+      let op = new Token("Operator", inputArr[i]);
+      output.push(op);
     } else if (isSemicolon(inputArr[i])) {
-      output.push(inputArr[i]);
+      let semi = new Token("Semicolon", ";");
+      output.push(semi);
     } else if (isLeftParen(inputArr[i])) {
-      output.push(inputArr[i]);
+      let paren = new Token("Paren", "(");
+      output.push(paren);
     } else if (isRightParen(inputArr[i])) {
       output.push(inputArr[i]);
     } else if (isLeftBracket(inputArr[i])) {
@@ -271,7 +265,7 @@ function scanner(input) {
 }
 
 function main() {
-  let testInput = "int a = 12;";
+  let testInput = "if (1 > 2) { return true; }";
   return scanner(testInput);
 }
 
