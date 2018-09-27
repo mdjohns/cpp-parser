@@ -249,15 +249,20 @@ function scanner(input) {
       let paren = new Token("Paren", "(");
       output.push(paren);
     } else if (isRightParen(inputArr[i])) {
-      output.push(inputArr[i]);
+      let paren = new Token("Paren", ")");
+      output.push(paren);
     } else if (isLeftBracket(inputArr[i])) {
-      output.push(inputArr[i]);
+      let bracket = new Token("Bracket", "[");
+      output.push(bracket);
     } else if (isRightBracket(inputArr[i])) {
-      output.push(inputArr[i]);
+      let bracket = new Token("Bracket", "]");
+      output.push(bracket);
     } else if (isLeftCurly(inputArr[i])) {
-      output.push(inputArr[i]);
+      let curly = new Token("Curly", "{");
+      output.push(curly);
     } else if (isRightCurly(inputArr[i])) {
-      output.push(inputArr[i]);
+      let curly = new Token("Curly", "}");
+      output.push(curly);
     }
   }
 
@@ -265,7 +270,7 @@ function scanner(input) {
 }
 
 function main() {
-  let testInput = "if (1 > 2) { return true; }";
+  let testInput = "if (1 > 2) { return true;} ";
   return scanner(testInput);
 }
 
