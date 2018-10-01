@@ -5,6 +5,7 @@ class Token {
     this.spelling = spelling;
   }
 }
+const Semicolon = new Token("Semicolon", ";");
 
 const keywords = [
   "auto",
@@ -31,6 +32,7 @@ const keywords = [
   "signed",
   "sizeof",
   "static",
+  "string",
   "struct",
   "switch",
   "typedef",
@@ -221,13 +223,14 @@ function scanner(input) {
   let output = [];
 
   for (let i = 0; i < inputArr.length; i++) {
+    let nextChar = inputArr[(i + 1) % inputArr.length]; // Testing for solution to semicolon issue
+
     if (isDigit(inputArr[i])) {
       let chunkDigits = new Token("", ""); //TODO: See TODO on line 1
       while (isDigit(inputArr[i]) || isDecimal(inputArr[i])) {
         chunkDigits.spelling += inputArr[i];
         i++;
       }
-
       // Checks for decimal, Token is a float if it includes one. Otherwise is labeled an integer.
       if (chunkDigits.spelling.includes(".")) {
         chunkDigits.kind = "Double";
@@ -236,15 +239,16 @@ function scanner(input) {
       }
       output.push(chunkDigits);
     } else if (isLetter(inputArr[i])) {
-      let chunkLetters = new Token("String literal", "");
-      while (isLetter(inputArr[i])) {
+      let chunkLetters = new Token("", ""); //TODO: See TODO on line 1
+      while (isLetter(inputArr[i]) || isDigit(inputArr[i])) {
         chunkLetters.spelling += inputArr[i];
         i++;
       }
       if (isKeyword(chunkLetters.spelling)) {
-        let key = new Token("Keyword", chunkLetters.spelling);
-        output.push(key);
+        chunkLetters.kind = "Keyword";
+        output.push(chunkLetters);
       } else {
+        chunkLetters.kind = "String Literal";
         output.push(chunkLetters);
       }
     } else if (isSpace(inputArr[i])) {
@@ -254,8 +258,7 @@ function scanner(input) {
       let op = new Token("Operator", inputArr[i]);
       output.push(op);
     } else if (isSemicolon(inputArr[i])) {
-      let semi = new Token("Semicolon", ";");
-      output.push(semi);
+      output.push(Semicolon);
     } else if (isLeftParen(inputArr[i])) {
       let paren = new Token("Paren", "(");
       output.push(paren);
@@ -281,7 +284,7 @@ function scanner(input) {
 }
 
 function main() {
-  let testInput = "if (1 > 2.3) { return true;} ";
+  let testInput = "string 1 = blahblah return";
   return scanner(testInput);
 }
 
