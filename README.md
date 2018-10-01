@@ -16,5 +16,5 @@ We will be using the Issues page to track progress of tasks for this project.
 
 #### Timeline
 
-- [ ] (9/5) **Create scanner**. This should retrieve tokens (such as `int`, `"blah"`, and `+`) from inputted code and push those tokens to an array.
-- [ ] (9/15) Create function to loop over array of tokens and break into statements.
+- [x] (9/5) **Create scanner**. This should retrieve tokens (such as `int`, `"blah"`, and `+`) from inputted code and push those tokens to an array.
+- [x] (9/15) Create function to loop over array of tokens and break into statements.
