@@ -1,3 +1,4 @@
+//TODO: Can we find a way to add default values to Tokens if no parameter values are passed?
 class Token {
   constructor(kind, spelling) {
     this.kind = kind;
@@ -211,16 +212,27 @@ function isKeyword(word) {
   }
 }
 
+/* TODO:
+Scanner does not recognize semicolons next to numbers or letters. Need to modify the isDigit (line 223-236) and isLetter (line 237-247) blocks
+to add that functionality
+*/
 function scanner(input) {
   let inputArr = input.split("");
   let output = [];
 
   for (let i = 0; i < inputArr.length; i++) {
     if (isDigit(inputArr[i])) {
-      let chunkDigits = new Token("Integer", "");
+      let chunkDigits = new Token("", ""); //TODO: See TODO on line 1
       while (isDigit(inputArr[i]) || isDecimal(inputArr[i])) {
         chunkDigits.spelling += inputArr[i];
         i++;
+      }
+
+      // Checks for decimal, Token is a float if it includes one. Otherwise is labeled an integer.
+      if (chunkDigits.spelling.includes(".")) {
+        chunkDigits.kind = "Double";
+      } else {
+        chunkDigits.kind = "Integer";
       }
       output.push(chunkDigits);
     } else if (isLetter(inputArr[i])) {
@@ -231,7 +243,6 @@ function scanner(input) {
       }
       if (isKeyword(chunkLetters.spelling)) {
         let key = new Token("Keyword", chunkLetters.spelling);
-        console.log("keyword");
         output.push(key);
       } else {
         output.push(chunkLetters);
@@ -270,7 +281,7 @@ function scanner(input) {
 }
 
 function main() {
-  let testInput = "if (1 > 2) { return true;} ";
+  let testInput = "if (1 > 2.3) { return true;} ";
   return scanner(testInput);
 }
 
