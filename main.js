@@ -223,13 +223,15 @@ function scanner(input) {
   let output = [];
 
   for (let i = 0; i < inputArr.length; i++) {
-    let nextChar = inputArr[(i + 1) % inputArr.length]; // Testing for solution to semicolon issue
-
     if (isDigit(inputArr[i])) {
       let chunkDigits = new Token("", ""); //TODO: See TODO on line 1
       while (isDigit(inputArr[i]) || isDecimal(inputArr[i])) {
+        let nextChar = inputArr[(i + 1) % inputArr.length]; //? Testing for solution to semicolon issue
         chunkDigits.spelling += inputArr[i];
         i++;
+        if (isSemicolon(nextChar)) {
+          output.push(Semicolon);
+        }
       }
       // Checks for decimal, Token is a float if it includes one. Otherwise is labeled an integer.
       if (chunkDigits.spelling.includes(".")) {
@@ -241,8 +243,12 @@ function scanner(input) {
     } else if (isLetter(inputArr[i])) {
       let chunkLetters = new Token("", ""); //TODO: See TODO on line 1
       while (isLetter(inputArr[i]) || isDigit(inputArr[i])) {
+        let nextChar = inputArr[(i + 1) % inputArr.length]; //? Testing for solution to semicolon issue
         chunkLetters.spelling += inputArr[i];
         i++;
+        if (isSemicolon(nextChar)) {
+          output.push(Semicolon);
+        }
       }
       if (isKeyword(chunkLetters.spelling)) {
         chunkLetters.kind = "Keyword";
@@ -284,7 +290,7 @@ function scanner(input) {
 }
 
 function main() {
-  let testInput = "string 1 = blahblah return";
+  let testInput = "string 1; = blahblah return;";
   return scanner(testInput);
 }
 
