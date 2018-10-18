@@ -9,6 +9,7 @@ const Semicolon = new Token("Semicolon", ";");
 
 const keywords = [
   "auto",
+  "bool",
   "break",
   "case",
   "char",
@@ -20,6 +21,7 @@ const keywords = [
   "else",
   "enum",
   "extern",
+  "false",
   "float",
   "for",
   "goto",
@@ -35,6 +37,7 @@ const keywords = [
   "string",
   "struct",
   "switch",
+  "true",
   "typedef",
   "union",
   "unsigned",
@@ -214,10 +217,6 @@ function isKeyword(word) {
   }
 }
 
-/* TODO:
-Scanner does not recognize semicolons next to numbers or letters. Need to modify the isDigit (line 223-236) and isLetter (line 237-247) blocks
-to add that functionality
-*/
 function scanner(input) {
   let inputArr = input.split("");
   let output = [];
@@ -225,13 +224,33 @@ function scanner(input) {
   for (let i = 0; i < inputArr.length; i++) {
     if (isDigit(inputArr[i])) {
       let chunkDigits = new Token("", ""); //TODO: See TODO on line 1
+      let nextCharStorage = "";
       while (isDigit(inputArr[i]) || isDecimal(inputArr[i])) {
+        // If the next character is something other than a number or decimal, save it for later to push after the full number is collected.
         let nextChar = inputArr[(i + 1) % inputArr.length]; //? Testing for solution to semicolon issue
+        if (isLeftParen(nextChar)) {
+          nextCharStorage = new Token("Paren", "(");
+        }
+        if (isRightParen(nextChar)) {
+          nextCharStorage = new Token("Paren", ")");
+        }
+        if (isLeftCurly(nextChar)) {
+          nextCharStorage = new Token("Curly", "{");
+        }
+        if (isRightCurly(nextChar)) {
+          nextCharStorage = new Token("Curly", "}");
+        }
+        if (isSpace(nextChar)) {
+          nextCharStorage = new Token("Space", " ");
+        }
+        if (isSemicolon(nextChar)) {
+          nextCharStorage = new Semicolon();
+        }
+        if (isOperator(nextChar)) {
+          nextCharStorage = new Token("Operator", nextChar);
+        }
         chunkDigits.spelling += inputArr[i];
         i++;
-        if (isSemicolon(nextChar)) {
-          output.push(Semicolon);
-        }
       }
       // Checks for decimal, Token is a float if it includes one. Otherwise is labeled an integer.
       if (chunkDigits.spelling.includes(".")) {
@@ -240,15 +259,36 @@ function scanner(input) {
         chunkDigits.kind = "Integer";
       }
       output.push(chunkDigits);
+      if (nextCharStorage != "") {
+        output.push(nextCharStorage);
+      }
     } else if (isLetter(inputArr[i])) {
       let chunkLetters = new Token("", ""); //TODO: See TODO on line 1
+      let nextCharStorage = "";
       while (isLetter(inputArr[i]) || isDigit(inputArr[i])) {
+        // If the next character is something other than a letter or number, save it for later to push after the full word is collected.
         let nextChar = inputArr[(i + 1) % inputArr.length]; //? Testing for solution to semicolon issue
+
+        if (isLeftParen(nextChar)) {
+          nextCharStorage = new Token("Paren", "(");
+        }
+        if (isRightParen(nextChar)) {
+          nextCharStorage = new Token("Paren", ")");
+        }
+        if (isLeftCurly(nextChar)) {
+          nextCharStorage = new Token("Curly", "{");
+        }
+        if (isRightCurly(nextChar)) {
+          nextCharStorage = new Token("Curly", "}");
+        }
+        if (isSpace(nextChar)) {
+          nextCharStorage = new Token("Space", " ");
+        }
+        if (isSemicolon(nextChar)) {
+          nextCharStorage = Semicolon;
+        }
         chunkLetters.spelling += inputArr[i];
         i++;
-        if (isSemicolon(nextChar)) {
-          output.push(Semicolon);
-        }
       }
       if (isKeyword(chunkLetters.spelling)) {
         chunkLetters.kind = "Keyword";
@@ -256,6 +296,9 @@ function scanner(input) {
       } else {
         chunkLetters.kind = "String Literal";
         output.push(chunkLetters);
+      }
+      if (nextCharStorage != "") {
+        output.push(nextCharStorage);
       }
     } else if (isSpace(inputArr[i])) {
       let space = new Token("Space", " ");
@@ -290,8 +333,10 @@ function scanner(input) {
 }
 
 function main() {
-  let testInput = "string 1; = blahblah return;";
   return scanner(testInput);
 }
 
+//TODO: fix scanner to see operators/brackets against letters and numbers
+
+let testInput = `if (1 < 2) { return true; }`;
 console.log(main());
