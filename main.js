@@ -344,21 +344,27 @@ function scanner(input) {
 function parser(arr) {
   let newDec = "";
   for (let i = 0; i < arr.length; i++) {
-    let nextChar = arr[(i + 1) % arr.length];
-    if (isKeyword(arr[i].kind)) {
+    if (isKeyword(arr[i].spelling)) {
       if (dataTypes.includes(arr[i].spelling)) {
         newDec = new Declaration(arr[i].spelling, "", "", "");
-        newDec.spelling(arr.map(token => token.spelling).join());
+        newDec.statement = arr.map(token => token.spelling).join("");
       }
+    }
+    // Looking for variable name
+    if (arr[i].kind == "String Literal") {
+      newDec.variableName = arr[i].spelling;
+    }
+    // Looking for = sign and potential compound statements to store as value
+    if (arr[i].spelling == "=") {
     }
   }
   return newDec;
 }
 
 function main() {
-  let testInput = "int myInt = 23;";
-  let scannedOutput = scanner(testInput);
-  return parser(scannedOutput);
+  let testInput = "int a = s + 3";
+  scannedInput = scanner(testInput);
+  return parser(scannedInput);
 }
 
 console.log(main());
