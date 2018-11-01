@@ -5,6 +5,7 @@ class Token {
     this.spelling = spelling;
   }
 }
+// Tokens that do not need specific spellings
 const Semicolon = new Token("Semicolon", ";");
 const LeftParen = new Token("Paren", "(");
 const RightParen = new Token("Paren", ")");
@@ -52,6 +53,17 @@ const keywords = [
   "volatile",
   "while"
 ];
+
+// Statement classes for parser
+class Declaration {
+  constructor(dataType, variableName, value, statement) {
+    this.dataType = dataType;
+    this.variableName = variableName;
+    this.value = value;
+    this.statement = statement;
+  }
+}
+const dataTypes = ["bool", "char", "double", "float", "int", "long", "short", "string"];
 
 function isDigit(char) {
   switch (char) {
@@ -329,11 +341,24 @@ function scanner(input) {
   return output;
 }
 
-function main() {
-  return scanner(testInput);
+function parser(arr) {
+  let newDec = "";
+  for (let i = 0; i < arr.length; i++) {
+    let nextChar = arr[(i + 1) % arr.length];
+    if (isKeyword(arr[i].kind)) {
+      if (dataTypes.includes(arr[i].spelling)) {
+        newDec = new Declaration(arr[i].spelling, "", "", "");
+        newDec.spelling(arr.map(token => token.spelling).join());
+      }
+    }
+  }
+  return newDec;
 }
 
-//TODO: fix scanner to see operators/brackets against letters and numbers
+function main() {
+  let testInput = "int myInt = 23;";
+  let scannedOutput = scanner(testInput);
+  return parser(scannedOutput);
+}
 
-let testInput = "int myInt = 23;";
 console.log(main());
