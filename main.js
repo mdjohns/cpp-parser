@@ -55,16 +55,18 @@ const keywords = [
 ];
 
 // Statement classes for parser
-class Declaration {
-  constructor(dataType, variableName, value, statement) {
+class Statement {
+  constructor(dataType, variableName, value, fullStatement, statementType) {
     this.dataType = dataType;
     this.variableName = variableName;
     this.value = value;
-    this.statement = statement;
+    this.fullStatement = fullStatement;
+    this.statementType = statementType;
   }
 }
 const dataTypes = ["bool", "char", "double", "float", "int", "long", "short", "string"];
 
+// Helper functions for scanner
 function isDigit(char) {
   switch (char) {
     case "0":
@@ -264,6 +266,8 @@ function scanNext(char) {
   return nextCharStorage;
 }
 
+// Helper functions for Parser
+
 function scanner(input) {
   let inputArr = input.split("");
   let output = [];
@@ -342,27 +346,50 @@ function scanner(input) {
 }
 
 function parser(arr) {
-  let newDec = "";
+  // initial variable to store result of parser
+  let stmnt = "";
   for (let i = 0; i < arr.length; i++) {
     if (isKeyword(arr[i].spelling)) {
       if (dataTypes.includes(arr[i].spelling)) {
-        newDec = new Declaration(arr[i].spelling, "", "", "");
-        newDec.statement = arr.map(token => token.spelling).join("");
+        stmnt = new Statement(arr[i].spelling, "", "", "", "Declaration");
+        // Join full array value to string and store as the fullStatement
+        stmnt.fullStatement = arr.map(token => token.spelling).join("");
       }
     }
-    // Looking for variable name
-    if (arr[i].kind == "String Literal") {
-      newDec.variableName = arr[i].spelling;
+
+    // Skip space
+    if (isSpace(arr[i].spelling)) {
+      i++;
     }
-    // Looking for = sign and potential compound statements to store as value
+
+    if (arr[i].kind == "String Literal" && stmnt.variableName == "") {
+      stmnt.variableName = arr[i].spelling;
+    }
+
     if (arr[i].spelling == "=") {
+      // skip equal sign
+      i++;
+      // skip space after equal sign if it's there
+      if (isSpace(arr[i].spelling)) {
+        i++;
+      }
+
+      let valStore = "";
+
+      while (arr[i].spelling != ";") {
+        valStore += arr[i].spelling;
+        i++;
+      }
+      if (valStore != "") {
+        stmnt.value = valStore;
+      }
     }
   }
-  return newDec;
+  return stmnt;
 }
 
 function main() {
-  let testInput = "int a = s + 3";
+  let testInput = "int a = b + 43 + c;";
   scannedInput = scanner(testInput);
   return parser(scannedInput);
 }
