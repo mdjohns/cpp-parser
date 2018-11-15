@@ -55,16 +55,38 @@ const keywords = [
 ];
 
 // Statement classes for parser
-class Statement {
-  constructor(dataType, variableName, value, fullStatement, statementType) {
+class Declaration {
+  constructor(dataType, variableName, value, fullStatement) {
     this.dataType = dataType;
     this.variableName = variableName;
     this.value = value;
     this.fullStatement = fullStatement;
-    this.statementType = statementType;
+  }
+}
+
+class Conditional {
+  constructor(type, condition, outcome, fullStatement) {
+    this.type = type;
+    this.condition = condition;
+    this.outcome = outcome;
+    this.fullStatement = fullStatement;
   }
 }
 const dataTypes = ["bool", "char", "double", "float", "int", "long", "short", "string"];
+
+// Helper functions for parser
+function isConditional(tokenSpelling) {
+  const conditions = ["if", "else if", "else"];
+  if (conditions.includes(tokenSpelling)) {
+    return true;
+  }
+}
+
+function isDataType(tokenSpelling) {
+  if (dataTypes.includes(tokenSpelling)) {
+    return true;
+  }
+}
 
 // Helper functions for scanner
 function isDigit(char) {
@@ -266,8 +288,6 @@ function scanNext(char) {
   return nextCharStorage;
 }
 
-// Helper functions for Parser
-
 function scanner(input) {
   let inputArr = input.split("");
   let output = [];
@@ -346,52 +366,131 @@ function scanner(input) {
 }
 
 function parser(arr) {
-  // initial variable to store result of parser
-  let stmnt = "";
+  // initial variables to store result of parser
+  let declaration, conditional;
+
   for (let i = 0; i < arr.length; i++) {
+    let nextChar = arr[(i + 1) % arr.length];
     if (isKeyword(arr[i].spelling)) {
-      if (dataTypes.includes(arr[i].spelling)) {
-        stmnt = new Statement(arr[i].spelling, "", "", "", "Declaration");
-        // Join full array value to string and store as the fullStatement
-        stmnt.fullStatement = arr.map(token => token.spelling).join("");
+      // Looking for data type for declaration statement
+      if (isDataType(arr[i].spelling)) {
+        declaration = new Declaration(arr[i].spelling, "", "", arr.map(token => token.spelling).join(""));
+      }
+
+      // Looking for if/elseif/else for conditional statement
+      if (isConditional(arr[i].spelling)) {
+        conditional = new Conditional(arr[i].spelling, "", "", arr.map(token => token.spelling).join(""));
       }
     }
 
-    // Skip space
-    if (isSpace(arr[i].spelling)) {
-      i++;
-    }
-
-    if (arr[i].kind == "String Literal" && stmnt.variableName == "") {
-      stmnt.variableName = arr[i].spelling;
-    }
-
-    if (arr[i].spelling == "=") {
-      // skip equal sign
-      i++;
-      // skip space after equal sign if it's there
+    if (declaration) {
+      // Skip Space
       if (isSpace(arr[i].spelling)) {
         i++;
       }
+      if (arr[i].kind == "String Literal" && declaration.variableName == "") {
+        declaration.variableName = arr[i].spelling;
+      }
+      if (arr[i].spelling == "=") {
+        // skip equal sign
+        i++;
+        // skip space after equal sign if it's there
+        if (isSpace(arr[i].spelling)) {
+          i++;
+        }
+        let valStore = "";
+        while (arr[i].spelling != ";") {
+          // store values from directly after equal sign to semicolon
+          valStore += arr[i].spelling;
+          i++;
+        }
+        if (valStore != "") {
+          declaration.value = valStore;
+        }
+      }
+    }
 
-      let valStore = "";
-
-      while (arr[i].spelling != ";") {
-        valStore += arr[i].spelling;
+    if (conditional) {
+      // Skip Space
+      if (isSpace(arr[i].spelling)) {
         i++;
       }
-      if (valStore != "") {
-        stmnt.value = valStore;
+      // Grab conditional statement inside parentheses
+      if (isLeftParen(arr[i].spelling)) {
+        i++;
+        let conditionStore = "";
+
+        while (arr[i].spelling != ")") {
+          conditionStore += arr[i].spelling;
+          i++;
+        }
+
+        if (conditionStore != "") {
+          conditional.condition = conditionStore;
+        }
+      }
+      // Grab result inside curly braces
+      if (isLeftCurly(arr[i].spelling)) {
+        let outcomeStore = "";
+        i++;
+
+        while (arr[i].spelling != "}") {
+          if (isSemicolon(arr[i].spelling)) {
+            i++;
+          }
+          outcomeStore += arr[i].spelling;
+          i++;
+        }
+        if (outcomeStore != "") {
+          conditional.outcome = outcomeStore;
+        }
       }
     }
   }
-  return stmnt;
+  if (declaration != "") {
+    return declaration;
+  } else if (conditional != "") {
+    return conditional;
+  }
 }
 
-function main() {
-  let testInput = "int a = b + 43 + c;";
-  scannedInput = scanner(testInput);
+let testDeclaration = "int c = (a + b) * 4;";
+let testConditional = "if (a > b) { return true; }";
+
+function main(test) {
+  scannedInput = scanner(test);
   return parser(scannedInput);
 }
 
-console.log(main());
+console.log(main(testConditional));
+
+// Functions for web page interface
+
+function evaluatePage() {
+  let inputCode = document.querySelector("#code-input").value;
+  let scannerOutput = scanner(inputCode);
+  let parserOutput = parser(scannerOutput);
+
+  // DOM elements to post results
+  let ParseDiv = document.querySelector(".parser-output");
+  let scanDiv = document.querySelector(".scanner-output");
+
+  scanDiv.appendChild(document.createTextNode(JSON.stringify(scannerOutput)));
+  ParseDiv.appendChild(document.createTextNode(JSON.stringify(parserOutput)));
+}
+
+function clearOutput() {
+  let inputCodeArea = document.querySelector("#code-input");
+  let ParseDiv = document.querySelector(".parser-output");
+  let scanDiv = document.querySelector(".scanner-output");
+
+  // iterate in reverse through child nodes, remove all except h2 titles
+  for (let i = scanDiv.childNodes.length - 1; i >= 1; i--) {
+    scanDiv.removeChild(scanDiv.childNodes[i]);
+    ParseDiv.removeChild(ParseDiv.childNodes[i]);
+  }
+
+  conditional = "";
+  declaration = "";
+  inputCodeArea.value = "";
+}

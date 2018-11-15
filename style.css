@@ -1,0 +1,32 @@
+html {
+  font-family: "Anonymous Pro", monospace;
+}
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: "full-size full-size" "scanner-output parser-output";
+}
+
+textarea {
+  font-family: "Anonymous Pro", monospace;
+  resize: none;
+  width: 100%;
+}
+
+h2 {
+  text-align: center;
+  font-family: "Lato", sans-serif;
+}
+
+.parser-output {
+  grid-area: parser-output;
+}
+
+.scanner-output {
+  grid-area: scanner-output;
+}
+
+.full-size {
+  grid-area: full-size;
+}
