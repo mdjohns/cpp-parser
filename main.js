@@ -372,14 +372,15 @@ function parser(arr) {
   for (let i = 0; i < arr.length; i++) {
     let nextChar = arr[(i + 1) % arr.length];
     if (isKeyword(arr[i].spelling)) {
+      // Looking for if/elseif/else for conditional statement
+      if (isConditional(arr[i].spelling)) {
+        declaration = "";
+        conditional = new Conditional(arr[i].spelling, "", "", arr.map(token => token.spelling).join(""));
+      }
+
       // Looking for data type for declaration statement
       if (isDataType(arr[i].spelling)) {
         declaration = new Declaration(arr[i].spelling, "", "", arr.map(token => token.spelling).join(""));
-      }
-
-      // Looking for if/elseif/else for conditional statement
-      if (isConditional(arr[i].spelling)) {
-        conditional = new Conditional(arr[i].spelling, "", "", arr.map(token => token.spelling).join(""));
       }
     }
 
@@ -411,10 +412,10 @@ function parser(arr) {
     }
 
     if (conditional) {
-      // Skip Space
-      if (isSpace(arr[i].spelling)) {
-        i++;
-      }
+      // Skip Space ** This may not be needed?? **
+      // if (isSpace(arr[i].spelling)) {
+      //   i++;
+      // }
       // Grab conditional statement inside parentheses
       if (isLeftParen(arr[i].spelling)) {
         i++;
@@ -434,6 +435,9 @@ function parser(arr) {
         let outcomeStore = "";
         i++;
 
+        if (isSpace(arr[i].spelling)) {
+          i++;
+        }
         while (arr[i].spelling != "}") {
           if (isSemicolon(arr[i].spelling)) {
             i++;
@@ -442,19 +446,34 @@ function parser(arr) {
           i++;
         }
         if (outcomeStore != "") {
+          
+          // Last character of string
+          let endofStore = outcomeStore.substr(outcomeStore.length-1);
+
+          // Checks if last character of string is a space and removes it
+          if (isSpace(endofStore)) {
+            outcomeStore = outcomeStore.substr(0, outcomeStore.length-1);
+          }
+
           conditional.outcome = outcomeStore;
         }
       }
     }
   }
+
+  /* 
+  Checks to see what statement is used and returns it, ignoring empty storage variable.
+  */
   if (declaration != "") {
     return declaration;
-  } else if (conditional != "") {
+  } 
+  else if (conditional != "") {
     return conditional;
   }
 }
 
-let testDeclaration = "int c = (a + b) * 4;";
+// Test values
+let testDeclaration = "double pi = 3.1459;";
 let testConditional = "if (a > b) { return true; }";
 
 function main(test) {
@@ -464,7 +483,9 @@ function main(test) {
 
 console.log(main(testConditional));
 
-// Functions for web page interface
+/*
+  All code below is only used for the web page portion. Not needed for any parsing.
+*/
 
 function evaluatePage() {
   let inputCode = document.querySelector("#code-input").value;
