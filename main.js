@@ -1,3 +1,8 @@
+/*
+  UAPTC CIS 2113 CIS Internship Project
+  Code by: Ashley Newsom, Marcus Johnson, Jugal Patel
+*/
+
 //TODO: Can we find a way to add default values to Tokens if no parameter values are passed?
 class Token {
   constructor(kind, spelling) {
