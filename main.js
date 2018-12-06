@@ -446,13 +446,12 @@ function parser(arr) {
           i++;
         }
         if (outcomeStore != "") {
-          
           // Last character of string
-          let endofStore = outcomeStore.substr(outcomeStore.length-1);
+          let endofStore = outcomeStore.substr(outcomeStore.length - 1);
 
           // Checks if last character of string is a space and removes it
           if (isSpace(endofStore)) {
-            outcomeStore = outcomeStore.substr(0, outcomeStore.length-1);
+            outcomeStore = outcomeStore.substr(0, outcomeStore.length - 1);
           }
 
           conditional.outcome = outcomeStore;
@@ -466,8 +465,7 @@ function parser(arr) {
   */
   if (declaration != "") {
     return declaration;
-  } 
-  else if (conditional != "") {
+  } else if (conditional != "") {
     return conditional;
   }
 }
@@ -481,7 +479,7 @@ function main(test) {
   return parser(scannedInput);
 }
 
-console.log(main(testConditional));
+console.log(main(`int myNumber = "47";`));
 
 /*
   All code below is only used for the web page portion. Not needed for any parsing.
