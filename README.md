@@ -10,11 +10,12 @@ This is an internship project developed for [UAPTC](https://uaptc.edu), managed 
 
 This project will be a JavaScript web application designed to be run in the browser.
 
-### TO DO
+#### To Do
 
-We will be using the Issues page to track progress of tasks for this project.
-
-#### Timeline
-
-- [x] (9/5) **Create scanner**. This should retrieve tokens (such as `int`, `"blah"`, and `+`) from inputted code and push those tokens to an array.
-- [x] (9/15) Create function to loop over array of tokens and break into statements.
+- [x] **Create scanner**. This should retrieve tokens (such as `int`, `"blah"`, and `+`) from inputted code and push those tokens to an array.
+- [ ] **Create parser**. This should take the tokens array from `scanner()` and attempt to form valid C++ statements (such as declarations, conditionals, and loops).
+  - [x] Parse declaration statements.
+  - [x] Parse conditional statements.
+  - [ ] Parse basic loop statements.
+  - **Issue**: Needs more testing for edge cases. Removing spaces in statement (ex. `if (a > b) { return true; }` vs `if (a>b){return true;}` breaks `scanner()` function.
+- [ ] **Build web interface**. 
